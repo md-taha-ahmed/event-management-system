@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
@@ -33,13 +34,10 @@ class EventController extends Controller
         return response($response, 201);
     }
 
-    public function show(Request $request)
+    public function createdEvent(Request $request)
     {
         $owner_id = \auth()->user()->id;
         $query = Event::query()->where('owner_id', $owner_id);
-
-
-        $query = Event::query();
         if ($search = $request->input(key: 'search')) {
             $query->whereRaw(sql: "name LIKE '%" . $search . "%'");
         }
@@ -49,7 +47,6 @@ class EventController extends Controller
         if ($request->input(key: 'from') &&  $request->input(key: 'to')) {
             $from = $request->input(key: 'from');
             $to = $request->input(key: 'to');
-            $query->whereRaw(sql: "date between  '$from' AND '$to' ");
             $query->whereRaw(sql: "date between  '$from' AND '$to' ");
         }
         $perPage = 9;
@@ -63,4 +60,5 @@ class EventController extends Controller
             'last page' => \ceil(num: $total / $perPage)
         ];
     }
+    
 }
