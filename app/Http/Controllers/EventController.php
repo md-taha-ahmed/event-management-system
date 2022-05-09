@@ -35,10 +35,40 @@ class EventController extends Controller
         return response($response, 201);
     }
 
-    public function show()
+    public function show(Request $request)
     {
         $owner_id = \auth()->user()->id;
-        $all = Event::select('*')->where('owner_id', $owner_id)->paginate(1);
-        return $all;
+        // $all = Event::select('*')->where('owner_id', $owner_id)->paginate(1);
+        // return $all;
+        // $query->where('owner_id', $owner_id)->paginate(1);
+        // $query->whereRaw(sql: "owner_id='$owner_id'")->paginate(1);
+        // $query = DB::table('events')->select('*')->get()->paginate(2);
+        // return $query;
+
+        $query = Event::query();
+        if ($search = $request->input(key: 'search')) {
+            $query->whereRaw(sql: "name LIKE '%" . $search . "%'");
+        }
+        if ($sort = $request->input(key: 'sort')) {
+            $query->orderBy('date', $sort);
+        }
+        if ($request->input(key: 'from') &&  $request->input(key: 'to')) {
+            $from = $request->input(key: 'from');
+            $to = $request->input(key: 'to');
+            // $query->whereRaw(sql: "date between  '2020-01-01' AND '2022-01-01' ");
+            $query->whereRaw(sql: "date between  '$from' AND '$to' ");
+            // echo "date between '$from'AND'$to'";
+            // echo $from, $to;
+        }
+        $perPage = 9;
+        $page = $request->input(key: 'page', default: 1);
+        $total = $query->count();
+        $result = $query->offset(\value($page - 1) * $perPage)->limit($perPage)->get();
+        return [
+            'data' => $result,
+            'total' => $total,
+            'page' => $page,
+            'last page' => \ceil(num: $total / $perPage)
+        ];
     }
 }
