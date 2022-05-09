@@ -2,85 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreEventInvitationRequest;
-use App\Http\Requests\UpdateEventInvitationRequest;
+use App\Models\Event;
 use App\Models\EventInvitation;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EventInvitationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function invite(Request $request)
     {
-        //
-    }
+        $fields = $request->validate([
+            'email' => 'required|string|email',
+        ]);
+        $owner_id = \auth()->user()->id;
+        $event_details = Event::firstWhere('owner_id', $owner_id);
+        $guest_details = User::firstWhere('email', $fields['email']);
+        $guest_check = DB::table('event_invitations')->where('guest_id', $guest_details->id)->get();
+        if (\blank($guest_check)) {
+            $event_invitation = EventInvitation::create([
+                'event_id' => $event_details->id,
+                'guest_id' => $guest_details->id,
+            ]);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreEventInvitationRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreEventInvitationRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\EventInvitation  $eventInvitation
-     * @return \Illuminate\Http\Response
-     */
-    public function show(EventInvitation $eventInvitation)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\EventInvitation  $eventInvitation
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(EventInvitation $eventInvitation)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateEventInvitationRequest  $request
-     * @param  \App\Models\EventInvitation  $eventInvitation
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateEventInvitationRequest $request, EventInvitation $eventInvitation)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\EventInvitation  $eventInvitation
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(EventInvitation $eventInvitation)
-    {
-        //
+            $response = [
+                'event' => $event_invitation,
+            ];
+            return response($response, 201);
+        } else {
+            return 'the user is already invited';
+        }
+        return $guest_check;
     }
 }
