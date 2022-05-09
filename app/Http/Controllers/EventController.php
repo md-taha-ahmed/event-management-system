@@ -52,7 +52,8 @@ class EventController extends Controller
         $perPage = 9;
         $page = $request->input(key: 'page', default: 1);
         $total = $query->count();
-        $result = $query->offset(\value($page - 1) * $perPage)->limit($perPage)->get();
+        $result = $query->offset(\value($page - 1) * $perPage)->limit($perPage)
+        ->get(['name','description','location','date','created_at','updated_at']);
         return [
             'data' => $result,
             'total' => $total,
@@ -60,5 +61,5 @@ class EventController extends Controller
             'last page' => \ceil(num: $total / $perPage)
         ];
     }
-    
+
 }
