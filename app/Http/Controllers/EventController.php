@@ -34,7 +34,7 @@ class EventController extends Controller
         return response($response, 201);
     }
 
-    public function createdEvent(Request $request)
+    public function show(Request $request)
     {
         $owner_id = \auth()->user()->id;
         $query = Event::query()->where('owner_id', $owner_id);

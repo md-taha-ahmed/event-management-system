@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class EventInvitationController extends Controller
 {
-    public function invite(Request $request)
+    public function create(Request $request)
     {
         $fields = $request->validate([
             'name' => 'required|string|exists:events,name',
@@ -36,7 +36,7 @@ class EventInvitationController extends Controller
         return response($response, 201);
     }
 
-    public function invitedEvent(Request $request)
+    public function show(Request $request)
     {
         $guest_id = \auth()->user()->id;
         $query = EventInvitation::query()

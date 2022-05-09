@@ -11,9 +11,9 @@ use App\Http\Controllers\Controller;
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/logout', [UserController::class, 'logout']);
     Route::post('/event/create', [EventController::class, 'create']);
-    Route::post('/event/invite', [EventInvitationController::class, 'invite']);
-    Route::get('/event/list/created', [EventController::class, 'createdEvent']);
-    Route::get('/event/list/invited', [EventInvitationController::class, 'invitedEvent']);
+    Route::post('/event/invite', [EventInvitationController::class, 'create']);
+    Route::get('/event/list/created', [EventController::class, 'show']);
+    Route::get('/event/list/invited', [EventInvitationController::class, 'show']);
     Route::post('/event/search', [Controller::class, 'showEvent']);
 });
 // public route
