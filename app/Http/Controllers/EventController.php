@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 // use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 
 
@@ -32,5 +33,12 @@ class EventController extends Controller
             'event' => $event,
         ];
         return response($response, 201);
+    }
+
+    public function show()
+    {
+        $owner_id = \auth()->user()->id;
+        $all = DB::table('events')->where('owner_id', $owner_id)->get();
+        return $all;
     }
 }

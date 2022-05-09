@@ -10,7 +10,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/logout', [UserController::class, 'logout']);
     Route::post('/event/create', [EventController::class, 'create']);
     Route::post('/event/invite', [EventInvitationController::class, 'invite']);
-
+    Route::get('/event/created-events', [EventController::class, 'show']);
 });
 // public route
 Route::post('/login', [UserController::class, 'login']);

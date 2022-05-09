@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::table('event_invitations', function (Blueprint $table) {
             // $table->renameColumn('owner_id', 'event_id');
             $table->foreign('event_id')
-                ->references('id')->on('users')
+                ->references('id')->on('events')
                 ->onDelete('cascade');
             $table->foreign('guest_id')
                 ->references('id')->on('users')

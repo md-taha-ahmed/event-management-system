@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,14 @@ class EventFactory extends Factory
      */
     public function definition()
     {
+        $users = User::pluck('id')->toArray();
+
         return [
-            //
+            'name' => $this->faker->unique()->word(),
+            'description' => $this->faker->sentence(),
+            'owner_id' => $this->faker->randomElement($users),
+            'location' => $this->faker->address(),
+            'date' => $this->faker->date(),
         ];
     }
 }
