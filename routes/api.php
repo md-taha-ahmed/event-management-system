@@ -5,12 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventInvitationController;
+use App\Http\Controllers\Controller;
+
 // protected route
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/logout', [UserController::class, 'logout']);
     Route::post('/event/create', [EventController::class, 'create']);
     Route::post('/event/invite', [EventInvitationController::class, 'invite']);
-    Route::get('/event/created-events', [EventController::class, 'show']);
+    Route::get('/event/list/created', [EventController::class, 'createdEvent']);
+    Route::get('/event/list/invited', [EventInvitationController::class, 'invitedEvent']);
+    Route::post('/event/search', [Controller::class, 'showEvent']);
 });
 // public route
 Route::post('/login', [UserController::class, 'login']);

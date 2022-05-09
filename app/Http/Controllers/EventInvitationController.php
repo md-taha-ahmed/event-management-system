@@ -14,8 +14,8 @@ class EventInvitationController extends Controller
     public function invite(Request $request)
     {
         $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email',
+            'name' => 'required|string|exists:events,name',
+            'email' => 'required|string|email|exists:users,email',
         ]);
         $event_details = Event::firstWhere('name', $fields['name']);
         $guest_details = User::firstWhere('email', $fields['email']);
