@@ -38,7 +38,7 @@ class EventController extends Controller
     public function show()
     {
         $owner_id = \auth()->user()->id;
-        $all = DB::table('events')->where('owner_id', $owner_id)->get();
+        $all = Event::select('*')->where('owner_id', $owner_id)->paginate(1);
         return $all;
     }
 }
