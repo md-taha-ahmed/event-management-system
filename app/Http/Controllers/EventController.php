@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\EventInvitation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Laravel\Passport\HasApiTokens;
+
 
 
 class EventController extends Controller
@@ -18,7 +16,7 @@ class EventController extends Controller
             'name' => 'required|string|unique:events,name',
             'description' => 'required|string',
             'location' => 'required|string',
-            'date' => 'required|date'
+            'date' => 'required|date',
         ]);
         $event = Event::create([
             'name' => $fields['name'],
@@ -53,7 +51,7 @@ class EventController extends Controller
         $page = $request->input(key: 'page', default: 1);
         $total = $query->count();
         $result = $query->offset(\value($page - 1) * $perPage)->limit($perPage)
-        ->get(['name','description','location','date','created_at','updated_at']);
+            ->get(['name', 'description', 'location', 'date', 'created_at', 'updated_at']);
         return [
             'data' => $result,
             'total' => $total,
@@ -61,5 +59,24 @@ class EventController extends Controller
             'last page' => \ceil(num: $total / $perPage)
         ];
     }
-
+    public function update(Request $request)
+    {
+        $fields = $request->validate([
+            'name' => 'string|required|exists:events,name',
+            'new_name' => 'required|string|unique:events,name',
+            'description' => 'required|string',
+            'location' => 'required|string',
+            'date' => 'required|date'
+        ]);
+        \print_r($fields);
+        $owner_id = \auth()->user()->id;
+        $event = Event::where('name', $fields['name'])->update([
+            'name' => $fields['new_name'],
+            'description' => $fields['description'],
+            'owner_id' => $owner_id,
+            'location' => $fields['location'],
+            'date' => $fields['date'],
+        ]);
+        \response($event, 200);
+    }
 }
